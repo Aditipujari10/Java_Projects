@@ -1,0 +1,160 @@
+package mobilestore.mainmenu;
+
+import mobilestore.entity.Mobile;
+import mobilestore.entity.User;
+import mobilestore.dbutil.Dbutil;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Program {
+
+	public static void addUser(Scanner sc) {
+		User user = new User();
+		user.accept(sc);
+		String sql = "INSERT INTO user(name,email,password,city) VALUES(?,?,?,?)";
+		try(Connection connection = Dbutil.getConnection()){
+			try(PreparedStatement insertStatement = connection.prepareStatement(sql)){
+				insertStatement.setString(1, user.getName());
+				insertStatement.setString(2, user.getEmail());
+				insertStatement.setString(3, user.getPassword());
+				insertStatement.setString(4, user.getCity());
+				
+				insertStatement.executeUpdate();
+				System.out.println("User Registered Successful......");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void addMobile(Scanner sc) {
+		Mobile mobile = new Mobile();
+		mobile.accept(sc);
+		String sql = "INSERT INTO mobile(company,model,price) VALUES(?,?,?)";
+		try(Connection connection = Dbutil.getConnection()){
+			try(PreparedStatement insertStatement = connection.prepareStatement(sql)){
+				insertStatement.setString(1, mobile.getCompany());
+				insertStatement.setString(2, mobile.getModel());
+				insertStatement.setDouble(3, mobile.getPrice());
+				
+				insertStatement.executeUpdate();
+				System.out.println("Mobile Added Successful......");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void displayAllMobile() {
+		String sql = "SELECT * FROM mobile";
+		try(Connection connection = Dbutil.getConnection()){
+			try(PreparedStatement selectStatement = connection.prepareStatement(sql) ){
+				ResultSet rs = selectStatement.executeQuery();
+				List<Mobile> mobileList = new ArrayList<Mobile>();
+				while(rs.next()) {
+					Mobile mobile = new Mobile();
+					mobile.setMobileid(rs.getInt(1));
+					mobile.setCompany(rs.getString(2));
+					mobile.setModel(rs.getString(3));
+					mobile.setPrice(rs.getDouble(4));	
+					mobileList.add(mobile);
+				}
+				mobileList.forEach(m -> System.out.println(m));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void placeOrder(Scanner sc) {
+		System.out.println("Enter UserId : ");
+		int userid = sc.nextInt();
+		System.out.println("Enter MobileId : ");
+		int mobileid = sc.nextInt();
+		
+		String sql = ("INSERT INTO orders(userid,mobileid) VALUES(?,?)");
+		try(Connection connection = Dbutil.getConnection()){
+			try(PreparedStatement insertStatement = connection.prepareStatement(sql)){
+				insertStatement.setInt(1, userid);
+				insertStatement.setInt(2, mobileid);
+				insertStatement.executeUpdate();
+				System.out.println("YAY.....order is placed");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void orderHistory(Scanner sc) {
+		System.out.println("Enter UserId : ");
+		int userid = sc.nextInt();
+		String sql = "SELECT * FROM orders WHERE userid = ?";
+		try(Connection connection = Dbutil.getConnection()){
+			try(PreparedStatement selectStatement = connection.prepareStatement(sql) ){
+				selectStatement.setInt(1, userid);
+				ResultSet rs = selectStatement.executeQuery();
+				while (rs.next()) {
+					int orderId = rs.getInt("orderid");
+					int userId = rs.getInt("userid");
+					int mobileId = rs.getInt("mobileid");
+					
+					System.out.println("OREDERID : " + orderId + " - " +"USERID : " + userId +" - " + "MOBILEID : " + mobileId);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public static int menu(Scanner sc) {
+		int choice;
+		System.out.println("------------------------------");
+		System.out.println("Menu : ");
+		System.out.println("0.Exit");
+		System.out.println("1.Add User");
+		System.out.println("2.Add Mobile");
+		System.out.println("3.Display All Mobile");
+		System.out.println("4.Place Order");
+		System.out.println("5.Order History");
+		System.out.println("Enter Choice : ");
+		choice = sc.nextInt();
+		System.out.println("-------------------------------");
+		return choice;
+		
+	}
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		//User user = null;
+		int choice;
+		while((choice = menu(sc))!=0) {
+			switch(choice) {
+				case 1 :{
+					addUser(sc);
+					break;
+				}
+				case 2:{
+					addMobile(sc);
+					break;
+				}
+				case 3:{
+					displayAllMobile();
+					break;
+				}
+				case 4:{
+					placeOrder(sc);
+					break;
+				}
+				case 5:{
+					orderHistory(sc);
+				}
+			}
+		}
+	}
+
+}
