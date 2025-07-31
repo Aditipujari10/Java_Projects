@@ -1,0 +1,50 @@
+package sampleTest.program;
+
+import java.util.Scanner;
+
+public class Student extends Person{
+	private int studentId;
+	private String department;
+	
+	public Student() {
+		
+	}
+
+	public Student(String name,String email,int studentId, String department) {
+		super(name,email);
+		this.studentId = studentId;
+		this.department = department;
+	}
+
+	public int getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(int studentId) {
+		this.studentId = studentId;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String departmentName) {
+		this.department = departmentName;
+	}
+
+	@Override
+	public String toString() {
+		return "Student [studentId=" + studentId + ", departmentName=" + department + "]";
+	}
+	
+	public void accept(Scanner sc) {
+		System.out.println("Enter Student name : ");
+		setName(sc.next());
+		System.out.println("Enter Email : ");
+		setEmail(sc.next());
+		System.out.println("Enter Department Name : ");
+		department =sc.next();
+	}
+	
+
+}
