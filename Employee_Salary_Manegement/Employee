@@ -1,0 +1,65 @@
+package Practice.Assignement1_B;
+
+import java.util.Scanner;
+
+public class Employee {
+	private String firstName;
+	private String lastName;
+	private double monthlySalary;
+	
+	public Employee() {
+		
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public double getMonthlySalary() {
+		return monthlySalary;
+	}
+
+	public void setMonthlySalary(double monthlySalary) {
+		if(monthlySalary > 0)
+			this.monthlySalary = monthlySalary;
+		else 
+			this.monthlySalary = 0.0;
+	}
+	
+	public void annualSalary() {
+		double AnnualSalary = 12 * getMonthlySalary();
+		System.out.println("Annual salary : " + AnnualSalary);
+	}
+	
+	public void raiseSalary() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter Percentage to Increase salary : ");
+		double percentage = sc.nextDouble();
+		double raiseSalary = monthlySalary * percentage /100;
+		monthlySalary = raiseSalary + monthlySalary;
+		System.out.println("Updated Monthly Salary: " + monthlySalary);
+		annualSalary();
+	}
+	
+	public void accept() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter Employee First name : ");
+		firstName = sc.next();
+		System.out.println("Enter Employee Last name : ");
+		lastName = sc.next();
+		System.out.println("Enter Employee Monthly Salary : ");
+		monthlySalary = sc.nextDouble();
+	}
+}
