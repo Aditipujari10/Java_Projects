@@ -1,0 +1,140 @@
+package sample.test;
+
+import java.util.Scanner;
+public class Program {
+
+	public static int MenuList() {
+		int choice;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("1.Add Employee ");
+		System.out.println("2.Display All Employees");
+		System.out.println("3.Search Employee By ID");
+		System.out.println("4.Display Employees joined in given Year");
+		System.out.println("5.Find Employee with Maximum Salary");
+		System.out.println("6.Find Employee with Minimum Salary");
+		System.out.println("7.Exit the Application.");
+		System.out.println("Enter Your Choice : ");
+		choice = sc.nextInt();
+		return choice;
+	}
+	public static void main(String[] args) {
+		int choice;
+		int n;
+		int count=0;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter size of array : ");
+		n = sc.nextInt();
+		Employee[] emp = new Employee[n];
+		while((choice = MenuList())!=7) {
+			switch(choice) {
+				case 1 : {
+					if(count < emp.length) {
+						System.out.println("Enter employee details:");
+						System.out.println("Enter Employee Name : ");
+						String name = sc.next();
+						
+						System.out.println("Enter Employee BirthDate : ");
+						MyDate dateOfBirth = new MyDate(sc.nextInt(),sc.nextInt(),sc.nextInt());
+						
+						System.out.println("Enter Employee ID : ");
+						int id = sc.nextInt();
+						
+						System.out.println("Enter Employee Department : ");
+						String department = sc.next();
+						
+						System.out.println("Enter Employee Salary : ");
+						double salary = sc.nextDouble();
+						
+						System.out.println("Enter Employee Date Of Joining : ");
+						MyDate dateOfJoining = new MyDate(sc.nextInt(),sc.nextInt(),sc.nextInt());
+						
+						emp[count++] = new Employee(name, dateOfBirth,id,department,salary,dateOfJoining);
+					}
+					else {
+						System.out.println("Array is full");
+					}
+					break;
+				}
+				case 2:{
+					if(count==0) {
+						System.out.println("Not Persent Any Employee details");
+					}
+					else {
+						for(int i=0;i<count;i++) {
+							System.out.println(emp[i]);
+						}
+					}
+					break;
+				}
+				case 3:{
+					System.out.println("Enter Id of Employee : ");
+					int empId = sc.nextInt();
+					boolean found = false;
+					for(int i=0;i<count;i++) {
+						if(empId == emp[i].getId()) {
+							System.out.println(emp[i]);
+							found = true;
+							break;
+						}
+					}
+					if(found = false) {
+						System.out.println("Employee is not found");
+					}
+					break;
+
+				}
+				case 4:{
+					System.out.println("Enter Employee year of joining : ");
+					int joiningDate = sc.nextInt();
+					boolean found = false;
+					for(int i=0;i<count;i++) {
+						if(joiningDate == emp[i].getDateOfJoining().getYear()) {
+							System.out.println(emp[i]);
+							found = true;
+							break;
+						}
+					}
+					if(found = false) {
+						System.out.println("Employee is not found");
+					}
+					break;
+				}
+				case 5:{
+					Employee maxSalary = emp[0];
+					if(count==0) {
+						System.out.println("Not Persent Any Employee details");
+					}
+					for(int i=1;i<count;i++) {
+						if(maxSalary.getSalary() < emp[i].getSalary()) {
+							maxSalary = emp[i];
+						}
+						System.out.println("Employee with maximum salary" + emp[i]);
+					}
+					break;
+				}
+				case 6:{
+					Employee minSalary = emp[0];
+					if(count==0) {
+						System.out.println("Not Persent Any Employee details");
+					}
+					for(int i=1;i<count;i++) {
+						if(minSalary.getSalary() > emp[i].getSalary()) {
+							minSalary = emp[i];
+						}
+						System.out.println("Employee with maximum salary " + emp[i]);
+					}
+					break;
+				}
+				case 7 :{
+					System.out.println("Exit...!!");
+					break;
+				}
+				default :{
+					System.out.println("Invalid choice");
+				}
+			}
+		}
+
+	}
+
+}
