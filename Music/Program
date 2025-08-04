@@ -1,0 +1,235 @@
+package program.music;
+
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Program {
+	public static void addArtist(Scanner sc) {
+		Artist artist = new Artist();
+		artist.accept(sc);
+		String sql = "INSERT INTO Artist(artist_id,name) VALUES(?,?)";
+		try(Connection connection = DbUtil.getConnection()){
+			try(PreparedStatement insertStatement = connection.prepareStatement(sql)){
+				insertStatement.setInt(1,artist.getArtist_id());
+				insertStatement.setString(2,artist.getName());
+				insertStatement.executeUpdate();
+				System.out.println("Artist Added Successfully.....!!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void addAlbum(Scanner sc) {
+		Album album = new Album();
+		album.accept(sc);
+		String sql = "INSERT INTO Album(album_id,title) VALUES(?,?)";
+		try(Connection connection = DbUtil.getConnection()){
+			try(PreparedStatement insertStatement = connection.prepareStatement(sql)){
+				insertStatement.setInt(1,album.getAlbum_id());
+				insertStatement.setString(2,album.getTitle());
+				insertStatement.executeUpdate();
+				System.out.println("Album Added Successfully.....!!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void addTrack(Scanner sc ) {
+		Track track = new Track();
+		track.accept(sc);
+		String sql = "INSERT INTO Track(track_id,title,album_id,artist_id) VALUES(?,?,?,?)";
+		try(Connection connection = DbUtil.getConnection()){
+			try(PreparedStatement insertStatement = connection.prepareStatement(sql)){
+				insertStatement.setInt(1,track.getTrack_id());
+				insertStatement.setString(2,track.getTitle());
+				insertStatement.setInt(3,track.getAlbum_id());
+				insertStatement.setInt(4,track.getArtist_id());
+				insertStatement.executeUpdate();
+				System.out.println("Track Added Successfully.....!!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void displayAllArtist() {
+		String sql = "SELECT * FROM artist";
+		try(Connection connection = DbUtil.getConnection()){
+			try(PreparedStatement selectStatement = connection.prepareStatement(sql)){
+				ResultSet rs = selectStatement.executeQuery();
+				List<Artist> list = new ArrayList<Artist>();
+				
+				while(rs.next()) {
+					Artist artist = new Artist();
+					artist.setArtist_id(rs.getInt(1));
+					artist.setName(rs.getString(2));
+					list.add(artist);
+				}
+				list.forEach(l -> System.out.println(l));
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void displayAllAlbum() {
+		String sql = "SELECT * FROM album";
+		try(Connection connection = DbUtil.getConnection()){
+			try(PreparedStatement selectStatement = connection.prepareStatement(sql)){
+				ResultSet rs = selectStatement.executeQuery();
+				List<Album> list = new ArrayList<Album>();
+				
+				while(rs.next()) {
+					Album album = new Album();
+					album .setAlbum_id(rs.getInt(1));
+					album .setTitle(rs.getString(2));
+					list.add(album);
+				}
+				list.forEach(l -> System.out.println(l));
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void viewTracksForArtist(Scanner sc) {
+		Artist artist = new Artist();
+		System.out.println("Enter Artist Id : ");
+		artist.setArtist_id(sc.nextInt());
+		String sql = "SELECT * FROM  Track WHERE artist_id = ?";
+		try(Connection connection = DbUtil.getConnection()){
+			try(PreparedStatement selectStatement = connection.prepareStatement(sql)){
+				selectStatement.setInt(1, artist.getArtist_id());
+				ResultSet rs = selectStatement.executeQuery();
+				while(rs.next()) {
+					Track track = new Track();
+					System.out.print(rs.getInt(1) +"-");
+					System.out.print(rs.getString(2) + "-");
+					System.out.print(rs.getInt(3) + "-");
+					System.out.print(rs.getInt(4) + "-");
+					System.out.println();
+				}
+			}
+		}
+		 catch (SQLException e) {
+				e.printStackTrace();
+			}
+	}
+	
+	public static void displayAllTrack() {
+		String sql = "SELECT * FROM  Track";
+		try(Connection connection = DbUtil.getConnection()){
+			try(PreparedStatement selectStatement = connection.prepareStatement(sql)){
+				ResultSet rs = selectStatement.executeQuery();
+				List<Track> list = new ArrayList<Track>();
+				
+				while(rs.next()) {
+					Track track = new Track();
+					track.setTrack_id(rs.getInt(1));
+					track.setTitle(rs.getString(2));
+					track.setAlbum_id(rs.getInt(3));
+					track.setArtist_id(rs.getInt(4));
+					list.add(track);
+				}
+				list.forEach(l -> System.out.println(l));
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void viewTracksForAlbum(Scanner sc) {
+		Album album = new Album();
+		System.out.println("Enter Artist Id : ");
+		album.setAlbum_id(sc.nextInt());
+		String sql = "SELECT * FROM  Track WHERE artist_id = ?";
+		try(Connection connection = DbUtil.getConnection()){
+			try(PreparedStatement selectStatement = connection.prepareStatement(sql)){
+				selectStatement.setInt(1, album.getAlbum_id());
+				ResultSet rs = selectStatement.executeQuery();
+				while(rs.next()) {
+					
+					System.out.print(rs.getInt(1) +"-");
+					System.out.print(rs.getString(2) + "-");
+					System.out.print(rs.getInt(3) + "-");
+					System.out.print(rs.getInt(4) + "-");
+					System.out.println();
+				}
+			}
+		}
+		 catch (SQLException e) {
+				e.printStackTrace();
+			}
+	}
+	public static int menuList(Scanner sc) {
+		int choice;
+		System.out.println("----------------------");
+		System.out.println("Menu : ");
+		System.out.println("0.Exit");
+		System.out.println("1.Add a New Artist");
+		System.out.println("2.Add a New Album");
+		System.out.println("3.Artist adds a track for the album");
+		System.out.println("4.Display all artists");
+		System.out.println("5.Display all albums");
+		System.out.println("6.View all tracks for a given artist");
+		System.out.println("7.Display all tracks");
+		System.out.println("8.View all tracks for a given album");
+		System.out.println("Enter Your Choice : ");
+		choice = sc.nextInt();
+		return choice;
+}
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int choice;
+		while((choice = menuList(sc))!=0) {
+			switch(choice) {
+				case 1 : {
+					addArtist(sc);
+					break;
+				}
+				case 2 : {
+					addAlbum(sc);
+					break;
+				}
+				case 3 : {
+					addTrack(sc);
+					break;
+				}
+				case 4 :{
+					displayAllArtist();
+					break;
+				}
+				case 5 :{
+					displayAllAlbum();
+					break;
+				}
+				case 6:{
+					viewTracksForArtist(sc);
+					break;
+				}
+				case 7:{
+					displayAllTrack();
+					break;
+				}
+				case 8:{
+					viewTracksForAlbum(sc);
+					break;
+				}
+				default :{
+					System.out.println("Invalid Choice");
+					break;
+				}
+			}
+		}
+	}
+
+}
